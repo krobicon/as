@@ -19,7 +19,7 @@ You can change the range by changing the following constants in Aimbot.cpp
 key:  
 Insert -> enable/disable silentaim  
 Delete -> speed down  
-PageUp -> enable/disable thirdperson view  
+PageUp -> enable/disable thirdperson mode  
 PageDown -> enable/disable item glow  
   
   
