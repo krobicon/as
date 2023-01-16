@@ -20,7 +20,7 @@ key:
 Insert -> enable/disable silentaim  
 Delete -> speed down  
 PageUp -> enable/disable thirdperson view  
-PageDown -> nable/disable item glow  
+PageDown -> enable/disable item glow  
   
   
 video:  
