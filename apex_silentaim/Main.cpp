@@ -255,9 +255,20 @@ test_rw_addr+16 = silentaim_z(float)
 test_rw_addr+20 = prevangle_x(float)
 test_rw_addr+24 = prevangle_y(float)
 test_rw_addr+28 = prevangle_z(float)
+test_rw_addr+32 = silentaim_enable_flag(4byte) 0=disable else=enable
+test_rw_addr+36 = safe_silentaim_enable_flag(4byte) 0=disable else=enable
 ################################################################################
 */
 __asm__ __volatile__("mov    rbx,0x14ea21000");
+
+//*(test_rw_addr+36) = *(test_rw_addr+32)
+__asm__ __volatile__("mov    r15d, DWORD PTR [rbx+32]");
+__asm__ __volatile__("mov    DWORD PTR [rbx+36], r15d");
+
+//if (safe_silentaim_enable_flag == 0) goto end_1;
+__asm__ __volatile__("cmp    DWORD PTR [rbx+36],0x0");
+__asm__ __volatile__("je     end_1");
+
 __asm__ __volatile__("mov    QWORD PTR [rbx],rdx");//*test_rw_addr = cmd_to (CUserCmd*)
 
 __asm__ __volatile__("mov    eax, DWORD PTR [rdx+0xc]");
@@ -282,6 +293,7 @@ __asm__ __volatile__("mov    DWORD PTR [rdx+0xc+8],eax");
 //__asm__ __volatile__("mov    DWORD PTR [rdx+0xc+8],0x00000000");
 
 __asm__ __volatile__("no_attack:");
+__asm__ __volatile__("end_1:");
 
 __asm__ __volatile__("pop r15");
 __asm__ __volatile__("pop r14");
@@ -335,9 +347,16 @@ test_rw_addr+16 = silentaim_z(float)
 test_rw_addr+20 = prevangle_x(float)
 test_rw_addr+24 = prevangle_y(float)
 test_rw_addr+28 = prevangle_z(float)
+test_rw_addr+32 = silentaim_enable_flag(4byte) 0=disable else=enable
+test_rw_addr+36 = safe_silentaim_enable_flag(4byte) 0=disable else=enable
 ################################################################################
 */
 __asm__ __volatile__("mov    rbx,0x14ea21000");
+
+//if (safe_silentaim_enable_flag == 0) goto end_2;
+__asm__ __volatile__("cmp    DWORD PTR [rbx+36],0x0");
+__asm__ __volatile__("je     end_2");
+
 __asm__ __volatile__("mov    rdx, QWORD PTR [rbx]");
 __asm__ __volatile__("mov    eax, DWORD PTR [rbx+20]");
 __asm__ __volatile__("mov    DWORD PTR [rdx+0xc],eax");
@@ -345,6 +364,8 @@ __asm__ __volatile__("mov    eax, DWORD PTR [rbx+24]");
 __asm__ __volatile__("mov    DWORD PTR [rdx+0xc+4],eax");
 __asm__ __volatile__("mov    eax, DWORD PTR [rbx+28]");
 __asm__ __volatile__("mov    DWORD PTR [rdx+0xc+8],eax");
+
+__asm__ __volatile__("end_2:");
 
 __asm__ __volatile__("pop r15");
 __asm__ __volatile__("pop r14");
@@ -461,6 +482,7 @@ int main(int argc, char *argv[])
     }
     my_util* myutil = new my_util(level, localPlayer, players, x11Utils);
     Aimbot *aimbot = new Aimbot(level, localPlayer, players, x11Utils);
+    aimbot->set_silentaim_enable_flag(true);
 
     // Main loop
     printf("SILENTAIM TEST STARTING MAIN LOOP\n");
@@ -478,13 +500,13 @@ int main(int argc, char *argv[])
                 player->markForPointerResolution();
             }
 
-
+            aimbot->watch_silentaim_key();
             aimbot->update();
             
             myutil->item_glow__pagedown(counter);
             //myutil->invisible_my_weapon();
             myutil->process_thirdperson__pageup();
-            myutil->speed_down__insert();
+            myutil->speed_down__delete();
             myutil->glow_enemy();
             
             

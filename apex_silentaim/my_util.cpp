@@ -83,18 +83,6 @@ public:
     	if (m_x11Utils->keyDown(0xff56) == true) {//PAGE_DOWN
              if (tmp_counter2 == 0) {
                   item_glow_flag = !item_glow_flag;
-                  
-                  if (item_glow_flag == true) {
-                      printf("\a");//BEEP SOUND
-                      fflush(stdout);
-                      std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                      printf("\a");//BEEP SOUND
-                      fflush(stdout);
-                  }
-                  else {
-                      printf("\a");//BEEP SOUND
-                      fflush(stdout);
-                  }
              }
              tmp_counter2++;
         }
@@ -215,12 +203,12 @@ public:
     	}
     }
     
-    void speed_down__insert() {
+    void speed_down__delete() {
         if (!m_level->isPlayable()) {
             return;
         }
     
-        if (m_x11Utils->keyDown(0xff63) == true) {//INSERT
+        if (m_x11Utils->keyDown(0xffff) == true) {//DELETE
             mem::WriteFloat(offsets::REGION + offsets::OFFSET_TIMESCALE + 0x68, std::numeric_limits<float>::min());
             //mem::WriteFloat(offsets::REGION + offsets::OFFSET_TIMESCALE + 0x68, 0.0f);
         }

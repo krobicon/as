@@ -20,6 +20,9 @@ private:
     X11Utils *m_x11Utils;
 
     Player *m_lockedOnPlayer = nullptr;
+
+    long tmp_counter;
+    bool silentaim_enable_flag;
 public:
     Aimbot(Level *level,
            LocalPlayer *localPlayer,
@@ -30,6 +33,46 @@ public:
         m_localPlayer = localPlayer;
         m_players = players;
         m_x11Utils = x11Utils;
+
+        tmp_counter = 0;
+        silentaim_enable_flag = true;
+        set_silentaim_enable_flag(silentaim_enable_flag);
+    }
+    void set_silentaim_enable_flag(bool flag) {
+        //test_rw_addr+32 = silentaim_enable_flag(4byte) 0=disable else=enable
+        if (flag == false) {
+            //printf("disable silentaim\n");
+            mem::WriteInt(offsets::OFFSET_SILENTAIM_TEST_RW_ADDR + 32, 0);
+        }
+        else {
+            //printf("enable silentaim\n");
+            mem::WriteInt(offsets::OFFSET_SILENTAIM_TEST_RW_ADDR + 32, 1);
+        }
+    }
+    void watch_silentaim_key() {
+        if (m_x11Utils->keyDown(0xff63) == true) {//INSERT
+             if (tmp_counter == 0) {
+                  silentaim_enable_flag = !silentaim_enable_flag;
+                  
+                  if (silentaim_enable_flag == true) {
+                      printf("\a");//BEEP SOUND
+                      fflush(stdout);
+                      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                      printf("\a");//BEEP SOUND
+                      fflush(stdout);
+                  }
+                  else {
+                      printf("\a");//BEEP SOUND
+                      fflush(stdout);
+                  }
+
+                  set_silentaim_enable_flag(silentaim_enable_flag);
+             }
+             tmp_counter++;
+        }
+        else {
+             tmp_counter = 0;
+        }
     }
     void update()
     {
