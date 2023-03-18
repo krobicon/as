@@ -80,6 +80,19 @@ public:
         std::string result = mem::ReadString(ptrLong);
         return result;
     }
+    std::string getSignifierName()
+    {
+        long basePointer = getBasePointer();
+        long ptrLong = basePointer + offsets::SIGNIFIER_NAME;
+        std::string result = mem::ReadString(ptrLong);
+        return result;
+    }
+    bool isDummy()
+    {
+        if (getSignifierName().compare("npc_dummie") == 0)
+            return true;
+        return false;
+    }
     void getusername(char* buf, int size) {
     	long nameIndex = mem::ReadLong(getBasePointer() + offsets::OFFSET_NAME_INDEX);
 	long nameOffset = mem::ReadLong(offsets::REGION + offsets::OFFSET_NAMELIST + ((nameIndex - 1) << 4));
